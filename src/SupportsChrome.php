@@ -27,11 +27,12 @@ trait SupportsChrome
      *
      * @throws \RuntimeException if the driver file path doesn't exist.
      *
+     * @param  array  $arguments
      * @return void
      */
-    public static function startChromeDriver()
+    public static function startChromeDriver(array $arguments = [])
     {
-        static::$chromeProcess = static::buildChromeProcess();
+        static::$chromeProcess = static::buildChromeProcess($arguments);
 
         static::$chromeProcess->start();
 
@@ -57,9 +58,10 @@ trait SupportsChrome
      *
      * @throws \RuntimeException if the driver file path doesn't exist.
      *
+     * @param  array  $arguments
      * @return \Symfony\Component\Process\Process
      */
-    protected static function buildChromeProcess()
+    protected static function buildChromeProcess(array $arguments = [])
     {
         $driver = static::$chromeDriver
                 ?: realpath(__DIR__.'/../bin/chromedriver-'.static::driverSuffix());
@@ -70,6 +72,7 @@ trait SupportsChrome
 
         return (new ProcessBuilder())
                 ->setPrefix(realpath($driver))
+                ->setArguments($arguments)
                 ->getProcess()
                 ->setEnv(static::chromeEnvironment());
     }
